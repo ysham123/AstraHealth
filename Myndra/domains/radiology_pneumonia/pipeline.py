@@ -8,8 +8,9 @@ from domains.radiology_common.heatmap import simple_saliency
 from domains.radiology_common.types import RadiologyReport
 from .model_loader import load_model
 
-# Classification threshold
-PNEUMONIA_THRESHOLD = 0.5
+# Classification threshold - raised to reduce false positives
+# torchxrayvision outputs are not well-calibrated, so 0.65 is more appropriate
+PNEUMONIA_THRESHOLD = 0.65
 
 def predict(image_path: str, generate_heatmap: bool = True) -> RadiologyReport:
     """Analyze chest X-ray for pneumonia.

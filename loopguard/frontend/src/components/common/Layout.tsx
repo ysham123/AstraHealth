@@ -21,6 +21,7 @@ import {
   BookOpen,
   Brain,
   Users,
+  ScanLine,
 } from 'lucide-react'
 import CommandPalette from '../CommandPalette'
 
@@ -28,10 +29,11 @@ import CommandPalette from '../CommandPalette'
 const navItems = [
   { path: '/', label: 'Dashboard', icon: Home, shortcut: '1' },
   { path: '/reading', label: 'Reading Room', icon: FileText, shortcut: '2' },
-  { path: '/ai', label: 'AI Assistant', icon: Brain, shortcut: '3' },
-  { path: '/tumor-board', label: 'Tumor Board', icon: Users, shortcut: '4' },
-  { path: '/reference', label: 'Reference', icon: BookOpen, shortcut: '5' },
-  { path: '/metrics', label: 'Analytics', icon: BarChart3, shortcut: '6' },
+  { path: '/scan', label: 'AI Scan Analysis', icon: ScanLine, shortcut: '3' },
+  { path: '/ai', label: 'AI Assistant', icon: Brain, shortcut: '4' },
+  { path: '/tumor-board', label: 'Tumor Board', icon: Users, shortcut: '5' },
+  { path: '/reference', label: 'Reference', icon: BookOpen, shortcut: '6' },
+  { path: '/metrics', label: 'Analytics', icon: BarChart3, shortcut: '7' },
 ]
 
 export default function Layout() {

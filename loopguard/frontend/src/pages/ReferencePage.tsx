@@ -40,17 +40,11 @@ const MEASUREMENTS: MeasurementCategory[] = [
     name: 'Vascular',
     icon: <Heart size={18} />,
     items: [
-      { structure: 'Aortic Root', normal: '< 4.0 cm', notes: 'Measured at sinuses of Valsalva' },
-      { structure: 'Ascending Aorta', normal: '< 3.7 cm', notes: 'At level of PA bifurcation' },
-      { structure: 'Aortic Arch', normal: '< 3.5 cm' },
-      { structure: 'Descending Thoracic Aorta', normal: '< 2.8 cm' },
-      { structure: 'Abdominal Aorta', normal: '< 3.0 cm (M), < 2.7 cm (F)', notes: 'Infrarenal' },
-      { structure: 'Main Pulmonary Artery', normal: '< 2.9 cm', notes: 'At bifurcation level' },
-      { structure: 'IVC', normal: '1.5 - 2.5 cm', notes: 'Intrahepatic segment' },
-      { structure: 'Portal Vein', normal: '< 13 mm', notes: '> 13mm suggests portal HTN' },
-      { structure: 'Common Iliac Artery', normal: '< 1.7 cm (M), < 1.5 cm (F)' },
-      { structure: 'Splenic Vein', normal: '< 10 mm' },
-      { structure: 'SMV', normal: '< 10 mm' },
+      { structure: 'Aortic Root', normal: '< 4.0 cm', notes: 'Sinuses of Valsalva' },
+      { structure: 'Ascending Aorta', normal: '< 3.7 cm' },
+      { structure: 'Abdominal Aorta', normal: '< 3.0 cm', notes: 'Infrarenal' },
+      { structure: 'Main PA', normal: '< 2.9 cm' },
+      { structure: 'Portal Vein', normal: '< 13 mm' },
     ]
   },
   {
@@ -58,31 +52,10 @@ const MEASUREMENTS: MeasurementCategory[] = [
     name: 'Solid Organs',
     icon: <Activity size={18} />,
     items: [
-      { structure: 'Liver (craniocaudal)', normal: '< 16 cm', notes: 'MCL, longitudinal' },
-      { structure: 'Spleen', normal: '< 12 cm length, < 7 cm width', notes: '> 13cm = splenomegaly' },
-      { structure: 'Kidney (length)', normal: '9 - 12 cm', notes: 'Left typically slightly larger' },
-      { structure: 'Pancreas (head)', normal: '< 3.0 cm' },
-      { structure: 'Pancreas (body)', normal: '< 2.5 cm' },
-      { structure: 'Pancreas (tail)', normal: '< 2.0 cm' },
-      { structure: 'Adrenal (limb width)', normal: '< 10 mm', notes: 'Body < 6mm' },
-      { structure: 'CBD', normal: '< 6 mm', notes: 'Add 1mm per decade > 60yo' },
-      { structure: 'Gallbladder Wall', normal: '< 3 mm', notes: 'Fasting, non-distended' },
-      { structure: 'Main Pancreatic Duct', normal: '< 3 mm (head), < 2 mm (body/tail)' },
-    ]
-  },
-  {
-    id: 'thorax',
-    name: 'Thorax',
-    icon: <Activity size={18} />,
-    items: [
-      { structure: 'Trachea (coronal)', normal: '15 - 25 mm' },
-      { structure: 'Trachea (sagittal)', normal: '13 - 22 mm' },
-      { structure: 'Main Bronchi', normal: '< 15 mm' },
-      { structure: 'Esophageal Wall', normal: '< 3 mm', notes: 'When distended' },
-      { structure: 'Pericardium', normal: '< 2 mm' },
-      { structure: 'LV Wall (diastole)', normal: '6 - 11 mm' },
-      { structure: 'RV Wall', normal: '< 5 mm' },
-      { structure: 'LA (AP)', normal: '< 4.0 cm' },
+      { structure: 'Liver', normal: '< 16 cm', notes: 'Craniocaudal' },
+      { structure: 'Spleen', normal: '< 12 cm' },
+      { structure: 'Kidney', normal: '9 - 12 cm' },
+      { structure: 'CBD', normal: '< 6 mm', notes: '+1mm per decade > 60' },
     ]
   },
   {
@@ -90,57 +63,27 @@ const MEASUREMENTS: MeasurementCategory[] = [
     name: 'Neuroimaging',
     icon: <Brain size={18} />,
     items: [
-      { structure: 'Optic Nerve Sheath', normal: '< 5.5 mm', notes: '3mm behind globe' },
-      { structure: 'Pituitary Height', normal: '< 9 mm', notes: 'May be larger in pregnancy/puberty' },
+      { structure: 'Pituitary', normal: '< 9 mm' },
       { structure: 'Third Ventricle', normal: '< 7 mm' },
-      { structure: 'Lateral Ventricle (frontal horn)', normal: '< 18 mm' },
-      { structure: 'Fourth Ventricle', normal: '< 12 mm (AP)' },
-      { structure: 'Internal Auditory Canal', normal: '< 8 mm' },
-      { structure: 'Cavernous ICA', normal: '3 - 7 mm' },
-    ]
-  },
-  {
-    id: 'msk',
-    name: 'Musculoskeletal',
-    icon: <Bone size={18} />,
-    items: [
-      { structure: 'Achilles Tendon', normal: '< 6 mm (AP)', notes: 'Thickest 2-6cm above insertion' },
-      { structure: 'Supraspinatus Tendon', normal: '< 8 mm' },
-      { structure: 'ACL', normal: '7 - 12 mm' },
-      { structure: 'Articular Cartilage (knee)', normal: '2 - 4 mm' },
-      { structure: 'Intervertebral Disc (lumbar)', normal: '10 - 15 mm (AP)' },
+      { structure: 'Optic Nerve Sheath', normal: '< 5.5 mm' },
     ]
   },
 ]
 
 const PROTOCOLS = [
   {
-    category: 'CT Abdomen/Pelvis',
+    category: 'CT Protocols',
     protocols: [
-      { name: 'Routine with Contrast', phases: 'Portal venous (70s)', notes: 'Standard for most indications' },
-      { name: 'Renal Mass', phases: 'Non-con, Corticomedullary (30s), Nephrographic (90s), ±Excretory (5min)', notes: '> 20 HU enhancement = solid' },
-      { name: 'Liver Mass (LI-RADS)', phases: 'Non-con, Arterial (25-30s), Portal venous (70s), Delayed (3-5min)', notes: 'For HCC surveillance in cirrhosis' },
-      { name: 'Pancreatic Mass', phases: 'Non-con, Pancreatic (40s), Portal venous (70s)', notes: 'Thin slices through pancreas' },
-      { name: 'CT Urogram', phases: 'Non-con, Nephrographic (100s), Excretory (10-15min)', notes: 'For hematuria, urothelial eval' },
-      { name: 'CTA Aorta', phases: 'Non-con (for IMH), Arterial (bolus tracking)', notes: 'ECG-gating for root' },
+      { name: 'CT A/P Routine', phases: 'Portal venous (70s)', notes: 'Standard' },
+      { name: 'CT PE Protocol', phases: 'CTA timing (PA bolus track)', notes: '100-150 HU in PA' },
+      { name: 'Liver (LI-RADS)', phases: 'Non-con, Art (25s), PV (70s), Delayed (3min)', notes: 'HCC surveillance' },
     ]
   },
   {
-    category: 'CT Chest',
+    category: 'MRI Protocols',
     protocols: [
-      { name: 'Routine with Contrast', phases: 'Portal venous timing', notes: 'Standard chest CT' },
-      { name: 'PE Protocol', phases: 'CTA timing (bolus track in PA)', notes: '100-150 HU threshold in PA' },
-      { name: 'HRCT (ILD)', phases: 'Non-contrast, inspiration + expiration', notes: 'Thin slices (1-1.25mm), prone if posterior dependent opacity' },
-      { name: 'Lung Cancer Screening', phases: 'Low-dose, non-contrast', notes: 'LDCT per NLST criteria' },
-    ]
-  },
-  {
-    category: 'MRI Abdomen',
-    protocols: [
-      { name: 'Liver (LI-RADS)', phases: 'T2, T1 in/out, DWI, Dynamic post-Gd (art, PV, delayed, HBP if using Eovist)', notes: 'HBP at 20min for Eovist' },
-      { name: 'MRCP', phases: 'Heavily T2-weighted, 2D/3D sequences', notes: 'No contrast needed' },
-      { name: 'Rectal Cancer', phases: 'High-res T2, DWI, ±contrast', notes: 'For staging, CRM assessment' },
-      { name: 'Prostate (PI-RADS)', phases: 'T2, DWI (high b-value), DCE', notes: 'Endorectal coil optional at 3T' },
+      { name: 'MRI Liver', phases: 'T2, T1 in/out, DWI, Dynamic Gd', notes: 'LI-RADS' },
+      { name: 'MRI Prostate', phases: 'T2, DWI, DCE', notes: 'PI-RADS v2.1' },
     ]
   },
 ]
@@ -148,72 +91,39 @@ const PROTOCOLS = [
 const EMERGENCY_PROTOCOLS = [
   {
     title: 'Contrast Reaction - Mild',
-    symptoms: 'Urticaria, pruritis, nausea, mild vomiting',
+    symptoms: 'Urticaria, pruritis, nausea',
     actions: [
       'Monitor vitals',
       'Diphenhydramine 25-50mg IV/IM/PO',
-      'Usually self-limiting',
       'Observe 30 minutes',
     ]
   },
   {
-    title: 'Contrast Reaction - Moderate',
-    symptoms: 'Diffuse urticaria, bronchospasm (mild), facial edema, tachycardia',
+    title: 'Contrast Reaction - Severe',
+    symptoms: 'Bronchospasm, laryngeal edema, hypotension',
     actions: [
-      'Call for assistance',
-      'Diphenhydramine 50mg IV',
-      'Bronchospasm: Albuterol 2-3 puffs',
-      'Epinephrine 0.3mg IM if progressing',
-      'IV fluids',
-      'Monitor closely',
-    ]
-  },
-  {
-    title: 'Contrast Reaction - Severe (Anaphylaxis)',
-    symptoms: 'Severe bronchospasm, laryngeal edema, hypotension, cardiac arrest',
-    actions: [
-      'Call code / activate emergency response',
-      'Epinephrine 0.3mg IM (anterolateral thigh) - FIRST LINE',
-      'May repeat q5-15 min',
+      'Call code',
+      'Epinephrine 0.3mg IM - FIRST LINE',
       'IV fluids wide open',
       'Oxygen 6-10 L/min',
-      'Elevate legs if hypotensive',
-      'Prepare for intubation if needed',
-      'Diphenhydramine 50mg IV, Methylprednisolone 125mg IV (adjuncts)',
-    ]
-  },
-  {
-    title: 'Vagal Reaction',
-    symptoms: 'Bradycardia, hypotension, diaphoresis, pallor',
-    actions: [
-      'Elevate legs',
-      'IV fluids',
-      'Atropine 0.5-1mg IV if persistent bradycardia',
-      'Monitor until resolved',
     ]
   },
   {
     title: 'Extravasation',
     symptoms: 'Pain, swelling at injection site',
     actions: [
-      'Stop injection immediately',
-      'Elevate affected extremity',
-      'Ice packs intermittently',
-      'Plastic surgery consult if > 100mL ionic or > 150mL non-ionic',
-      'Document volume extravasated',
+      'Stop injection',
+      'Elevate extremity',
+      'Ice packs',
     ]
   },
 ]
 
 const EXTERNAL_RESOURCES = [
-  { name: 'Radiopaedia', url: 'https://radiopaedia.org', description: 'Radiology reference and cases' },
-  { name: 'StatDx', url: 'https://www.statdx.com', description: 'Differential diagnosis database' },
-  { name: 'ACR Appropriateness Criteria', url: 'https://www.acr.org/Clinical-Resources/ACR-Appropriateness-Criteria', description: 'Imaging guidelines' },
-  { name: 'LI-RADS', url: 'https://www.acr.org/Clinical-Resources/Reporting-and-Data-Systems/LI-RADS', description: 'Liver imaging reporting' },
+  { name: 'Radiopaedia', url: 'https://radiopaedia.org', description: 'Radiology encyclopedia & cases' },
+  { name: 'ACR Guidelines', url: 'https://www.acr.org/Clinical-Resources/ACR-Appropriateness-Criteria', description: 'Imaging appropriateness criteria' },
   { name: 'Fleischner Society', url: 'https://fleischner.memberclicks.net', description: 'Pulmonary nodule guidelines' },
-  { name: 'BI-RADS', url: 'https://www.acr.org/Clinical-Resources/Reporting-and-Data-Systems/Bi-Rads', description: 'Breast imaging reporting' },
-  { name: 'PI-RADS', url: 'https://www.acr.org/Clinical-Resources/Reporting-and-Data-Systems/PI-RADS', description: 'Prostate imaging reporting' },
-  { name: 'TI-RADS', url: 'https://www.acr.org/Clinical-Resources/Reporting-and-Data-Systems/TI-RADS', description: 'Thyroid imaging reporting' },
+  { name: 'LI-RADS', url: 'https://www.acr.org/Clinical-Resources/Reporting-and-Data-Systems/LI-RADS', description: 'Liver reporting system' },
 ]
 
 export default function ReferencePage() {

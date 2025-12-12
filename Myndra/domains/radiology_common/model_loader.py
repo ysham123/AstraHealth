@@ -36,7 +36,8 @@ def load_radiology_model(
         _MODEL_CACHE[cache_key] = model
     
     # Find task index in model's pathology list
-    task_to_idx = {t: i for i, t in enumerate(model.pathologies)}
+    pathologies = list(model.pathologies)
+    task_to_idx = {t: i for i, t in enumerate(pathologies)}
     
     # Try exact match first
     idx = task_to_idx.get(task, None)
@@ -47,13 +48,16 @@ def load_radiology_model(
         for pathology, i in task_to_idx.items():
             if task_lower in pathology.lower():
                 idx = i
+                print(f"[INFO] Task '{task}' matched to pathology '{pathology}' at index {i}")
                 break
     
     if idx is None:
-        available = ", ".join(model.pathologies)
+        available = ", ".join(pathologies)
         raise ValueError(
             f"Task '{task}' not found in model pathologies. "
             f"Available: {available}"
         )
+    else:
+        print(f"[INFO] {task} detection using pathology '{pathologies[idx]}' at index {idx}")
     
     return model, idx, device

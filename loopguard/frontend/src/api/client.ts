@@ -79,6 +79,30 @@ class ApiClient {
   delete<T>(endpoint: string, options?: RequestOptions): Promise<T> {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' })
   }
+
+  async upload<T>(endpoint: string, formData: FormData, options?: RequestOptions): Promise<T> {
+    const { skipAuth = false } = options || {}
+
+    const headers: Record<string, string> = {}
+
+    if (!skipAuth) {
+      const authHeader = await this.getAuthHeader()
+      Object.assign(headers, authHeader)
+    }
+
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Upload failed' }))
+      throw new Error(error.detail || `HTTP ${response.status}`)
+    }
+
+    return response.json()
+  }
 }
 
 export const api = new ApiClient(API_BASE_URL)

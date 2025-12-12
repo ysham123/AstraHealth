@@ -18,6 +18,7 @@ from .presentation.api import (
     ai_router,
     worklist_router,
     tumor_board_router,
+    scan_router,
 )
 
 
@@ -74,6 +75,7 @@ def create_app() -> FastAPI:
     app.include_router(ai_router, prefix="/api")
     app.include_router(worklist_router, prefix="/api")
     app.include_router(tumor_board_router, prefix="/api")
+    app.include_router(scan_router, prefix="/api")
     
     return app
 

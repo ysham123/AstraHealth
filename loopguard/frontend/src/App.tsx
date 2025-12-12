@@ -9,6 +9,7 @@ import ReadingRoomPage from './pages/ReadingRoomPage'
 import ReferencePage from './pages/ReferencePage'
 import AIAssistantPage from './pages/AIAssistantPage'
 import TumorBoardPage from './pages/TumorBoardPage'
+import ScanAnalysisPage from './pages/ScanAnalysisPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -47,6 +48,7 @@ function App() {
         <Route index element={<DashboardPage />} />
         <Route path="metrics" element={<MetricsPage />} />
         <Route path="reading" element={<ReadingRoomPage />} />
+        <Route path="scan" element={<ScanAnalysisPage />} />
         <Route path="reference" element={<ReferencePage />} />
         <Route path="ai" element={<AIAssistantPage />} />
         <Route path="tumor-board" element={<TumorBoardPage />} />

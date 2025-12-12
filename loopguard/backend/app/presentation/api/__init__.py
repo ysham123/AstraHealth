@@ -7,6 +7,7 @@ from .health import router as health_router
 from .ai import router as ai_router
 from .worklist import router as worklist_router
 from .tumor_board import router as tumor_board_router
+from .scan import router as scan_router
 
 __all__ = [
     "auth_router",
@@ -16,4 +17,5 @@ __all__ = [
     "ai_router",
     "worklist_router",
     "tumor_board_router",
+    "scan_router",
 ]

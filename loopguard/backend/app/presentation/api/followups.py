@@ -38,27 +38,6 @@ from .dependencies import CurrentUser, DbSession, get_client_ip, require_role
 router = APIRouter(prefix="/followups", tags=["followups"])
 
 
-class MockReportRepo:
-    """Mock report repository for development."""
-    async def get_by_id(self, report_id):
-        from datetime import datetime
-        from dataclasses import dataclass
-        from uuid import UUID
-        
-        @dataclass
-        class MockReport:
-            id: any
-            study_id: any
-            finalized_at: any
-        
-        # Use the actual mock patient ID from our test data
-        return MockReport(
-            id=report_id,
-            study_id=UUID("00000000-0000-0000-0000-000000000001"),  # Mock patient ID
-            finalized_at=datetime.utcnow(),
-        )
-
-
 @router.post("", response_model=FollowUpResponse, status_code=status.HTTP_201_CREATED)
 async def create_followup(
     request: Request,

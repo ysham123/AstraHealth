@@ -19,7 +19,7 @@ class AnalystAgent(BaseAgent):
         status = "derived insight" if success else "inconclusive result"
         confidence_change = 0.03 if success else -0.08
 
-        self.confidence = max(0.1, min(0.1, self.confidence + confidence_change))
+        self.confidence = max(0.1, min(1.0, self.confidence + confidence_change))
         result = (
             f"{self.name} ({self.role}) {status} for task: '{task}' "
             f"[confidence={self.confidence:.2f}]"

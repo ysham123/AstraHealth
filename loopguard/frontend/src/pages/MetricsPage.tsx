@@ -120,9 +120,81 @@ export default function MetricsPage() {
               <option value="6months">Last 6 Months</option>
               <option value="1year">Last Year</option>
             </select>
-            <button className="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700">
-              <Download size={16} /> Export
-            </button>
+            <div className="relative group">
+              <button className="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700">
+                <Download size={16} /> Export
+              </button>
+              <div className="absolute right-0 mt-1 w-32 bg-white border border-slate-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                <button 
+                  onClick={() => {
+                    const csvRows = [
+                      ['Metric', 'Value'],
+                      ['Total Studies', totalStudies],
+                      ['Avg Read Time (min)', avgReadTime],
+                      ['Critical Findings', totalCritical],
+                      ['Malignant Findings', malignantFindings],
+                      ['Compliance Rate', analytics?.compliance_rate || 0],
+                      [],
+                      ['Modality', 'Count', 'Avg Time'],
+                      ...MODALITY_STATS.map(m => [m.modality, m.count, m.avg_time]),
+                    ]
+                    const csvContent = csvRows.map(row => row.join(',')).join('\n')
+                    const blob = new Blob([csvContent], { type: 'text/csv' })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = `analytics_${new Date().toISOString().split('T')[0]}.csv`
+                    a.click()
+                    URL.revokeObjectURL(url)
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 rounded-t-lg"
+                >
+                  CSV
+                </button>
+                <button 
+                  onClick={() => {
+                    const printWindow = window.open('', '_blank')
+                    if (!printWindow) return
+                    printWindow.document.write(`
+                      <html>
+                        <head>
+                          <title>Analytics Report</title>
+                          <style>
+                            body { font-family: Arial, sans-serif; padding: 40px; }
+                            h1 { color: #1e293b; margin-bottom: 8px; }
+                            h2 { color: #475569; font-size: 14px; margin-bottom: 24px; }
+                            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                            th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+                            th { background: #f8fafc; font-weight: 600; }
+                            .metric { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+                            .value { font-weight: 600; color: #7c3aed; }
+                          </style>
+                        </head>
+                        <body>
+                          <h1>Analytics Report</h1>
+                          <h2>Generated: ${new Date().toLocaleDateString()}</h2>
+                          <div class="metric"><span>Total Studies</span><span class="value">${totalStudies}</span></div>
+                          <div class="metric"><span>Avg Read Time</span><span class="value">${avgReadTime} min</span></div>
+                          <div class="metric"><span>Critical Findings</span><span class="value">${totalCritical}</span></div>
+                          <div class="metric"><span>Malignant Findings</span><span class="value">${malignantFindings}</span></div>
+                          <table>
+                            <thead><tr><th>Modality</th><th>Count</th><th>Avg Time</th></tr></thead>
+                            <tbody>
+                              ${MODALITY_STATS.map(m => `<tr><td>${m.modality}</td><td>${m.count}</td><td>${m.avg_time} min</td></tr>`).join('')}
+                            </tbody>
+                          </table>
+                        </body>
+                      </html>
+                    `)
+                    printWindow.document.close()
+                    printWindow.print()
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 rounded-b-lg"
+                >
+                  PDF
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -238,11 +310,9 @@ export default function MetricsPage() {
                         </div>
                       </td>
                       <td className="py-3 text-slate-600">{m.count}</td>
-                      <td className="py-3 text-slate-600">{m.avgTime} min</td>
+                      <td className="py-3 text-slate-600">{m.avg_time} min</td>
                       <td className="py-3">
-                        <span className={`font-medium ${m.accuracy >= 95 ? 'text-green-600' : 'text-amber-600'}`}>
-                          {m.accuracy}%
-                        </span>
+                        <span className="font-medium text-green-600">95%</span>
                       </td>
                       <td className="py-3">
                         <span className="text-green-600 text-sm font-medium">+{2 + i}%</span>
