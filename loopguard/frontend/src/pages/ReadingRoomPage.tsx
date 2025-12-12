@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'
 import { api } from '../api/client'
 import { 
   FileText, Calendar, ChevronRight, Search, Check, AlertTriangle, 
-  Clock, Ruler, BookOpen, Copy, Zap, History, Plus, Loader2, RefreshCw
+  Clock, BookOpen, Copy, Zap, History, Plus, Loader2, RefreshCw
 } from 'lucide-react'
 
 interface Study {

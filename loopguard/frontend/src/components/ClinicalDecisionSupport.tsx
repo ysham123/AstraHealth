@@ -71,7 +71,7 @@ interface Props {
   onApply?: (guideline: Guideline) => void
 }
 
-export default function ClinicalDecisionSupport({ selectedFinding, onApply }: Props) {
+export default function ClinicalDecisionSupport({ selectedFinding: _selectedFinding, onApply }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [appliedId, setAppliedId] = useState<string | null>(null)
 

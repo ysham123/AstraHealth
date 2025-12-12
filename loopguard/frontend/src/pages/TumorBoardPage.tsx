@@ -6,8 +6,8 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api/client'
 import {
-  Users, FileText, Target, TrendingUp, TrendingDown, Minus,
-  Calendar, CheckCircle, AlertTriangle, Plus, Edit3, Download, 
+  Users, FileText, Target,
+  Calendar, CheckCircle, AlertTriangle, Edit3, Download, 
   Share2, Activity, ClipboardList, Loader2, RefreshCw
 } from 'lucide-react'
 
