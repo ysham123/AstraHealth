@@ -100,16 +100,16 @@ class FollowUpRecommendation:
         Check if status transition is valid.
         
         Domain Rules:
-        - PENDING can go to SCHEDULED, CANCELLED
-        - SCHEDULED can go to COMPLETED, CANCELLED
+        - PENDING can go to SCHEDULED, COMPLETED, CANCELLED
+        - SCHEDULED can go to PENDING, COMPLETED, CANCELLED
+        - OVERDUE can go to SCHEDULED, COMPLETED, CANCELLED
         - COMPLETED and CANCELLED are terminal states
         """
-        # Relaxed transitions for development - allow more flexibility
         valid_transitions = {
             FollowUpStatus.PENDING: {FollowUpStatus.SCHEDULED, FollowUpStatus.COMPLETED, FollowUpStatus.CANCELLED},
             FollowUpStatus.SCHEDULED: {FollowUpStatus.PENDING, FollowUpStatus.COMPLETED, FollowUpStatus.CANCELLED},
-            FollowUpStatus.COMPLETED: {FollowUpStatus.PENDING},  # Allow reopening for dev
-            FollowUpStatus.CANCELLED: {FollowUpStatus.PENDING},  # Allow reopening for dev
+            FollowUpStatus.COMPLETED: set(),
+            FollowUpStatus.CANCELLED: set(),
             FollowUpStatus.OVERDUE: {FollowUpStatus.SCHEDULED, FollowUpStatus.COMPLETED, FollowUpStatus.CANCELLED},
         }
         return new_status in valid_transitions.get(self.status, set())
