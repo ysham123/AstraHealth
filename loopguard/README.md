@@ -1,321 +1,98 @@
 # LoopGuard
 
-**Radiology Follow-up Tracking System**
+LoopGuard is a course prototype for tracking radiology follow-up recommendations.
+The intended workflow connects a recommendation to a due date, an assigned
+coordinator, and a record of status changes. It explores how unfinished follow-up
+work could remain visible after a report is written.
 
-A HIPAA-oriented full-stack application for tracking radiology follow-up recommendations, built with Clean Architecture principles and SOLID design patterns.
+## Repository guide
 
----
+The backend uses Python, FastAPI, SQLAlchemy, and PostgreSQL. Domain objects define
+recommendations and workflow rules; application services coordinate operations;
+repository interfaces separate those operations from storage. Supabase provides
+authentication. The frontend uses React, TypeScript, and Vite.
 
-## Overview
+Useful starting points:
 
-LoopGuard helps radiologists and coordinators manage follow-up imaging recommendations to ensure patients don't fall through the cracks. Key features:
+- [Follow-up model](backend/app/domain/entities/followup.py): due dates and states.
+- [Worklist service](backend/app/application/services/list_worklist_service.py):
+  filters, assignment, due dates, and overdue information.
+- [Status-update service](backend/app/application/services/update_followup_status_service.py):
+  transition checks, action records, and an audit call.
+- [Active frontend routes](frontend/src/App.tsx): the current dashboard and pages.
 
-- **Radiologist Panel**: Create follow-up recommendations while reading studies
-- **Coordinator Worklist**: Track, filter, and update follow-up statuses
-- **Admin Metrics**: Compliance dashboards with completion/overdue rates
-- **Audit Trail**: HIPAA-aligned logging of all PHI access
+The repository includes earlier page variants that are not mounted by `App.tsx`.
+Some API handlers use services and others access storage directly. In particular,
+the POST follow-up handler bypasses the separate creation service. Role checks
+and audit logging are therefore not uniformly enforced across the API.
 
----
+## Local development with Docker
 
-## Architecture
+Install Docker with Compose and create a Supabase project with email/password
+authentication. Use synthetic data when evaluating this prototype.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                      PRESENTATION LAYER                         │
-│                   (FastAPI Routers, Schemas)                    │
-├─────────────────────────────────────────────────────────────────┤
-│                      APPLICATION LAYER                          │
-│                  (Use Cases / Services)                         │
-├─────────────────────────────────────────────────────────────────┤
-│                       DOMAIN LAYER                              │
-│            (Entities, Value Objects, Interfaces)                │
-├─────────────────────────────────────────────────────────────────┤
-│                    INFRASTRUCTURE LAYER                         │
-│      (SQLAlchemy, Supabase Auth, Audit Logger)                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+From the `loopguard` directory:
 
-### User Roles
-
-| Role | Permissions |
-|------|-------------|
-| **RADIOLOGIST** | Create follow-ups, view own patients |
-| **COORDINATOR** | Manage worklist, update statuses |
-| **ADMIN** | Full access, view metrics and audit logs |
-
----
-
-## Tech Stack
-
-### Backend
-- **Python 3.11+** with type hints
-- **FastAPI** - Async web framework
-- **SQLAlchemy 2.0** - Async ORM
-- **Pydantic 2** - Validation and settings
-- **PostgreSQL** - Database
-- **Supabase Auth** - JWT authentication
-
-### Frontend
-- **React 18** with TypeScript
-- **Vite** - Build tool
-- **React Router** - Navigation
-- **TailwindCSS** - Styling
-- **Lucide React** - Icons
-- **Recharts** - Charts
-- **@supabase/supabase-js** - Auth client
-
----
-
-## Quick Start
-
-### Prerequisites
-- Docker & Docker Compose
-- Supabase project (for authentication)
-
-### 1. Clone and Configure
-
-```bash
-cd loopguard
-
-# Copy environment files
+```sh
 cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env.local
-
-# Edit .env files with your Supabase credentials
+# Set SUPABASE_URL, SUPABASE_ANON_KEY and SUPABASE_JWT_SECRET in backend/.env.
+docker compose --env-file backend/.env up --build -d
+docker compose --env-file backend/.env exec backend python create_tables.py
 ```
 
-### 2. Start with Docker Compose
+The `--env-file` argument supplies Compose's variable interpolation; putting a
+file in `backend/` alone does not do that. Compose supplies the local database
+URL and frontend variables. The defaults expose development services locally and
+are not deployment settings.
 
-```bash
-# Start all services
-docker-compose up -d
+Open the frontend at `http://localhost:5173` and API docs at
+`http://localhost:8000/docs`. The `/health` and `/ready` endpoints return status
+responses; `/ready` does not check database connectivity.
 
-# View logs
-docker-compose logs -f
-```
+`create_tables.py` creates missing tables from the models using the asyncpg
+driver. It does not migrate existing schemas. Although Alembic is listed as a
+dependency, this repository does not include an Alembic migration configuration
+or revision history. An empty database also has no example studies or reports;
+those records must exist before creating a follow-up through the corresponding
+API operation.
 
-Services will be available at:
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:8000
-- **API Docs**: http://localhost:8000/docs
+## Running services without Docker
 
-### 3. Run Migrations (First Time)
+With a local PostgreSQL instance, copy and configure the backend environment
+file, including `DATABASE_URL`, then run from `backend/`:
 
-```bash
-# Enter backend container
-docker-compose exec backend bash
-
-# Run Alembic migrations
-alembic upgrade head
-```
-
----
-
-## Local Development (Without Docker)
-
-### Backend
-
-```bash
-cd backend
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # or `venv\Scripts\activate` on Windows
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up environment
-cp .env.example .env
-# Edit .env with your settings
-
-# Run migrations
-alembic upgrade head
-
-# Start dev server
+```sh
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python create_tables.py
 uvicorn app.main:app --reload --port 8000
 ```
 
-### Frontend
+In a separate terminal, from `frontend/`:
 
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Set up environment
+```sh
 cp .env.example .env.local
-# Edit .env.local with your Supabase credentials
-
-# Start dev server
+# Set VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY and VITE_API_BASE_URL.
+npm ci
 npm run dev
 ```
 
----
+Use `http://localhost:8000/api` for the frontend API base URL. Features beyond
+follow-up tracking may require additional configuration in their own handlers.
 
-## API Endpoints
+## Checks and limits
 
-### Authentication
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/link` | Link Supabase user to LoopGuard |
-| GET | `/api/auth/me` | Get current user info |
+Run `python -m pytest tests/test_domain.py -q` from `backend/` for the domain
+tests. They cover due dates, terminal states, role helpers, and interval parsing;
+they do not validate every API route or database transaction. Completed and
+cancelled items are terminal. Due dates currently approximate a month as 30 days.
 
-### Follow-ups
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/followups` | Create follow-up recommendation |
-| GET | `/api/followups/worklist` | Get filtered worklist |
-| GET | `/api/followups/{id}` | Get specific follow-up |
-| PATCH | `/api/followups/{id}/status` | Update follow-up status |
+From `frontend/`, `npm run type-check` and `npm run build` check TypeScript and the
+production bundle. The existing lint script needs an ESLint configuration before
+it can be treated as a repository check.
 
-### Metrics
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/metrics/followups` | Get compliance metrics (Admin only) |
-
-### Health
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/health` | Health check |
-| GET | `/ready` | Readiness check |
-
----
-
-## Environment Variables
-
-### Backend
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `DATABASE_URL` | PostgreSQL connection string | Yes |
-| `SUPABASE_URL` | Supabase project URL | Yes |
-| `SUPABASE_ANON_KEY` | Supabase anon key | Yes |
-| `SUPABASE_JWT_SECRET` | JWT secret for verification | Yes |
-| `CORS_ORIGINS` | Allowed CORS origins | No |
-| `ENVIRONMENT` | development/staging/production | No |
-
-### Frontend
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `VITE_SUPABASE_URL` | Supabase project URL | Yes |
-| `VITE_SUPABASE_ANON_KEY` | Supabase anon key | Yes |
-| `VITE_API_BASE_URL` | Backend API URL | No |
-
----
-
-## Supabase Setup
-
-1. Create a new Supabase project at https://supabase.com
-2. Go to Settings > API to get:
-   - Project URL (`SUPABASE_URL`)
-   - `anon` public key (`SUPABASE_ANON_KEY`)
-   - JWT Secret (`SUPABASE_JWT_SECRET`)
-3. Enable Email/Password auth in Authentication > Providers
-
----
-
-## Production Deployment
-
-### Backend (AWS ECS / Docker Host)
-
-```bash
-# Build production image
-docker build -t loopguard-api ./backend
-
-# Run with production settings
-docker run -d \
-  -e DATABASE_URL="postgresql://..." \
-  -e SUPABASE_URL="https://..." \
-  -e SUPABASE_JWT_SECRET="..." \
-  -e ENVIRONMENT=production \
-  -p 8000:8000 \
-  loopguard-api
-```
-
-### Frontend (Vercel)
-
-```bash
-cd frontend
-
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel --prod
-```
-
-Set environment variables in Vercel dashboard.
-
----
-
-## Testing
-
-### Backend
-
-```bash
-cd backend
-pytest tests/ -v
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm run type-check
-npm run lint
-```
-
----
-
-## Project Structure
-
-```
-loopguard/
-├── backend/
-│   ├── app/
-│   │   ├── domain/           # Entities, value objects, interfaces
-│   │   ├── application/      # Use cases / services
-│   │   ├── infrastructure/   # DB, auth, repositories
-│   │   └── presentation/     # API routes, schemas
-│   ├── tests/
-│   ├── requirements.txt
-│   └── Dockerfile
-├── frontend/
-│   ├── src/
-│   │   ├── api/              # API client
-│   │   ├── components/       # React components
-│   │   ├── hooks/            # Custom hooks
-│   │   ├── pages/            # Page components
-│   │   ├── supabase/         # Supabase client
-│   │   └── types/            # TypeScript types
-│   └── package.json
-├── docker-compose.yml
-└── README.md
-```
-
----
-
-## HIPAA Alignment
-
-LoopGuard includes several HIPAA-inspired safeguards:
-
-- **Audit Logging**: All PHI access is logged with user, timestamp, and IP
-- **Role-Based Access**: Users see only data relevant to their role
-- **Append-Only Audit**: Audit logs cannot be modified or deleted
-- **JWT Authentication**: Secure, stateless authentication via Supabase
-- **Encryption in Transit**: HTTPS required in production
-
-**Note**: For full HIPAA compliance, additional measures are required (BAA with Supabase, encryption at rest, etc.).
-
----
-
-## License
-
-MIT License
-
----
-
-*Part of the AstraHealth mono-repo - See also: [Myndra](../Myndra/README_Myndra.md)*
+This is a prototype with no claimed hospital deployment or measured clinical
+outcome. Authentication, role helpers, and audit-related code do not establish
+HIPAA compliance. Production use would require further access-control, logging,
+data-handling, deployment, and operational work beyond this course project.

@@ -74,6 +74,16 @@ class TestFollowUpRecommendation:
         with pytest.raises(ValueError, match="Invalid status transition"):
             followup.update_status(FollowUpStatus.PENDING)
 
+    @pytest.mark.parametrize("terminal", [FollowUpStatus.COMPLETED, FollowUpStatus.CANCELLED])
+    @pytest.mark.parametrize("target", list(FollowUpStatus))
+    def test_terminal_rejection_preserves_record(self, terminal, target):
+        original_time = datetime(2024, 1, 1)
+        followup = FollowUpRecommendation(status=terminal, updated_at=original_time)
+        with pytest.raises(ValueError, match="Invalid status transition"):
+            followup.update_status(target)
+        assert followup.status == terminal
+        assert followup.updated_at == original_time
+
 
 class TestUser:
     """Tests for User entity."""
